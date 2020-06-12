@@ -25,7 +25,12 @@ module.exports = (firebase) => {
   router.post('/login', (req, res) => {
     const { email, password } = req.body
     firebase.auth().signInWithEmailAndPassword(email, password).then(response => {
-      res.json(response)
+      const user = response.user.toJSON()
+      res.json({
+        ...user.providerData[0],
+        ...user.stsTokenManager,
+        id: user.uid
+      })
     }).catch(error => {
       const errorCode = error.code;
       const errorMessage = error.message;

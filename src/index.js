@@ -16,11 +16,17 @@ app.use(cors())
 const port = process.env.APP_PORT || 8080;
 const host = process.env.APP_HOST || '127.0.0.1';
 
+
+
 const authRouter = require('./routes/auth')(firebase);
+app.use('/', authRouter);
+
+// Auth middle
+const authMiddleware = require('./middleware/auth')(firebase)
+app.use(authMiddleware)
+
 const doctorRouter = require('./routes/doctor')(firebase);
 const appointmentRouter = require('./routes/appointments')(firebase);
-
-app.use('/', authRouter);
 app.use('/doctor', doctorRouter);
 app.use('/appointments', appointmentRouter);
 
