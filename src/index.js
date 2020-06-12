@@ -28,13 +28,13 @@ const host = process.env.APP_HOST || '127.0.0.1';
 const authRouter = require('./routes/auth')(firebase);
 app.use('/', authRouter);
 
-// Auth middle
-const authMiddleware = require('./middleware/auth')(adminFirebase)
-app.use(authMiddleware)
-
 const doctorRouter = require('./routes/doctor')(firebase);
-const appointmentRouter = require('./routes/appointments')(firebase);
 app.use('/doctor', doctorRouter);
+// Auth middle
+const appointmentRouter = require('./routes/appointments')(firebase);
+const authMiddleware = require('./middleware/auth')(adminFirebase)
+
+app.use(authMiddleware)
 app.use('/appointments', appointmentRouter);
 
 app.listen(port, host);
