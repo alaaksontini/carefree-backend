@@ -20,19 +20,29 @@ module.exports = (firebase) => {
 
   // add new Doctor
   router.post('/add', (req, res) => {
-    let newDoctor = firebase.database().ref('doctor').push();
-    newDoctor.set(req.body).then(response => {
-      res.json();
-    }).catch(error => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      res.status(500).json({
-        error: {
-          errorCode,
-          errorMessage,
-        },
+    let body = req.body
+    // Create user associated with doctor
+    const { email, password } = body
+
+    delete body.email
+    delete body.password
+
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(response => {
+      const user = response.user
+      let newDoctor = firebase.database().ref('doctor').push();
+      newDoctor.set({ ...body, uid: user.uid }).then(resp => {
+        res.json(resp);
+      }).catch(error => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        res.status(500).json({
+          error: {
+            errorCode,
+            errorMessage,
+          },
+        });
       });
-    });
+    })
   });
 
   // Show single Doctor
