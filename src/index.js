@@ -6,6 +6,13 @@ const app = express();
 var cors = require('cors')
 const utils = require('./utils')
 const firebase = require('firebase')
+const adminFirebase = require('firebase-admin')
+const serviceAccountConfig = require('../carefree-a2fc0-firebase-adminsdk-6sfs3-10ef2d11a7.json')
+
+adminFirebase.initializeApp({
+  credential: adminFirebase.credential.cert(serviceAccountConfig),
+  databaseURL: 'https://carefree-a2fc0.firebaseio.com'
+})
 
 var defaultProject = firebase.initializeApp(utils.loadFirebaseConfig())
 
@@ -22,7 +29,7 @@ const authRouter = require('./routes/auth')(firebase);
 app.use('/', authRouter);
 
 // Auth middle
-const authMiddleware = require('./middleware/auth')(firebase)
+const authMiddleware = require('./middleware/auth')(adminFirebase)
 app.use(authMiddleware)
 
 const doctorRouter = require('./routes/doctor')(firebase);

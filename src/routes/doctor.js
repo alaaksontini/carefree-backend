@@ -20,7 +20,7 @@ module.exports = (firebase) => {
 
   // add new Doctor
   router.post('/add', (req, res) => {
-    let newDoctor = firebase.database().ref('doctor').push(req.body);
+    let newDoctor = firebase.database().ref('doctor').push();
     newDoctor.set(req.body).then(response => {
       res.json();
     }).catch(error => {
